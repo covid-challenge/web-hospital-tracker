@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Hospital;
 
 class HospitalResourceController extends Controller
 {
@@ -13,7 +14,26 @@ class HospitalResourceController extends Controller
      */
     public function index()
     {
+
+        $radiusOfEarthInKilometers = 6371;
+        $latOfBoundingCircle = 14.5680867;
+        $longOfBoundingCircle = 120.8805591;
+        $radiusOfManilaInKilometers = 200;
         
+
+        // computations
+        $minLat = $latOfBoundingCircle - $radiusOfManilaInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
+        $maxLat = $latOfBoundingCircle + $radiusOfManilaInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
+        $minLong = $longOfBoundingCircle - $radiusOfManilaInKilometers / $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
+        $maxLong = $longOfBoundingCircle + $radiusOfManilaInKilometers/ $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
+
+        // $data = Hospital::whereBetween("lat", [$minLat, $maxLat])
+        //                 ->whereBetween("lng", [$minLong, $maxLong])
+        //                 ->get();
+
+        $data = Hospital::all();
+
+        return response()->json($data);
     }
 
     /**
