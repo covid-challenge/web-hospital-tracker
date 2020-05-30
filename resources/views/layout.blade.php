@@ -55,7 +55,7 @@
                         </svg>
                     </span>
                     <input type="hidden" class="token" name="_token" value="{{ csrf_token() }}">
-                    <input class="form-control ct-activity__search_input" data-url="{{url('search-hospital')}}" value="" type="text" name="search" placeholder="Search your hospital...">
+                    <input class="ct-activity__search_input" data-url="{{url('search-hospital')}}" value="" type="text" name="search" placeholder="Search your hospital...">
                 </div>
             </div>
             <div class="header_default">
