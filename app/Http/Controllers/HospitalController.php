@@ -15,10 +15,22 @@ class HospitalController extends Controller
      */
     public function index()
     {
-        $hospitals = Hospital::where('name', '<>', '')->where('lat', '<>', '')->where('lng', '<>', '')->get();
-        return view('index', compact('hospitals'));
+      $subquery = DB::table('hospital')
+      ->select(DB::raw("MAX(updateddate) as updated_date, cfname"))
+      ->groupBy('cfname');
+
+      $hospitals = Hospital::from("hospital as real_hospitals")
+      ->joinSub($subquery, "grouped_hospitals", function($join) {
+          $join->on("real_hospitals.cfname", "=", "grouped_hospitals.cfname")
+              ->on("real_hospitals.updateddate", "=", "grouped_hospitals.updated_date");
+      })
+      ->whereNotNull('lat')
+      ->whereNotNull('long')
+      ->get();
+  
+      return view('index', compact('hospitals'));
     }
-    
+
     public function searchHospital(Request $search){
       try {
         $data = $search->data;
