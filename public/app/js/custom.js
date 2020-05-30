@@ -25,7 +25,7 @@ let Map = (function(){
       var latlng = $(this).data('coordinates');
       var lat = latlng.split('/')[0];
       var lng = latlng.split('/')[1];
-      console.log(latlng);
+      // console.log(latlng);
       if(latlng === '/'){
         var onboarding = $('[data-remodal-id=onboarding]').remodal();
         $('.ct-modal__content').html('');
@@ -35,7 +35,12 @@ let Map = (function(){
         onboarding.open();
       }
       else {
-          map.setView(new L.LatLng(lat, lng), 30);
+        var map = new L.map('map').setView([lat, lng], 20);
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
       }
     }
 

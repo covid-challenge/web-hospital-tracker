@@ -55,6 +55,7 @@
                         </svg>
                     </span>
                     <input type="hidden" class="token" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" class="nearest_hospital" name="url" value="{{URL('nearest-hospital')}}">
                     <input class="ct-activity__search_input" data-url="{{url('search-hospital')}}" value="" type="text" name="search" placeholder="Search your hospital...">
                 </div>
             </div>
