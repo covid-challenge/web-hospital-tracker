@@ -25,7 +25,7 @@ class HospitalController extends Controller
               ->on("real_hospitals.updateddate", "=", "grouped_hospitals.updated_date");
       })
       ->whereNotNull('lat')
-      ->whereNotNull('long')
+      ->whereNotNull('lng')
       ->get();
   
       return view('index', compact('hospitals'));
