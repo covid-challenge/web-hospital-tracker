@@ -46,15 +46,23 @@
                             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                         </svg>
                     </span>
-                    <input class="form-control ct-activity__search_input" type="text" placeholder="Search your hospital...">
+                    <input type="hidden" class="token" name="_token" value="{{ csrf_token() }}">
+                    <input class="form-control ct-activity__search_input" data-url="{{url('search-hospital')}}" value="" type="text" name="search" placeholder="Search your hospital...">
                 </div>
             </div>
-
-            <h1 class="mt-5">HospitALL</h1>
-            <p>
+            <div class="header_default">
+              <h1 class="mt-5">HospitALL</h1>
+              <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            </p>
+              </p>
+            </div>
+            <div class="container_header" style="display:none !important;">
+              <h1 class="mt-5">Search results</h1>
+               <div class="ct-activity__container wt-container">
+
+               </div>
+           </div>
         </div>
 
         <p class="copyright">&copy; HospitALL. All Rights Reserved 2020.</p>
@@ -78,5 +86,6 @@
   <script src="{{asset('app/js/app.js')}}"></script>
 
   <script src="{{asset('app/js/custom.js')}}"></script>
+  <script src="{{asset('app/js/searchHospital.js')}}"></script>
 </body>
 </html>

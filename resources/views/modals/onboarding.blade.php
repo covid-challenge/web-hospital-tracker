@@ -1,4 +1,4 @@
-<div class="remodal ct-modal" data-remodal-id="onboarding" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc">
+<div class="remodal ct-modal " data-remodal-id="onboarding" role="dialog" aria-labelledby="modal1Title" aria-describedby="modal1Desc">
     <button data-remodal-action="close" class="remodal-close" aria-label="Close"></button>
 
     <div class="ct-modal__body">
