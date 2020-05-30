@@ -35,6 +35,8 @@ class HospitalResourceController extends Controller
                             $join->on("real_hospitals.cfname", "=", "grouped_hospitals.cfname")
                                 ->on("real_hospitals.updateddate", "=", "grouped_hospitals.updated_date");
                         })
+                        ->whereNotNull("lat")
+                        ->whereNotNull("lng")
                         ->whereBetween("lat", [$minLat, $maxLat])
                         ->whereBetween("lng", [$minLong, $maxLong])
                         ->paginate(40);
@@ -99,6 +101,8 @@ class HospitalResourceController extends Controller
                             $join->on("real_hospitals.cfname", "=", "grouped_hospitals.cfname")
                                 ->on("real_hospitals.updateddate", "=", "grouped_hospitals.updated_date");
                         })
+                        ->whereNotNull("lat")
+                        ->whereNotNull("lng")
                         ->where("real_hospitals.cfname", "like", $request->input("q") . "%")
                         ->paginate(40);
 
