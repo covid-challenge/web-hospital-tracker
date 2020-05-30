@@ -20,15 +20,11 @@
         var hospitals = JSON.parse( JSON.stringify( {!! json_encode($hospitals) !!} ) );
         
         var markers = L.markerClusterGroup();
-
         for(var counter = 0; counter < hospitals.length; counter++)
         {
             var marker = L.marker([hospitals[counter]['lat'], hospitals[counter]['lng']]);
-            marker.bindPopup("<strong>" + hospitals[counter]['name'] + "</strong> <br/> "
-            + "City: " + ( hospitals[counter]['city'] != '' ? ucwords(hospitals[counter]['city']) : 'N/A' ) + "<br/>"
-            + "Operator Type: " + ucwords(hospitals[counter]['operator_type']) + "<br/>"
-            + "Amenity: " + ucwords(hospitals[counter]['amenity']) + "<br/>"
-            + "Status: " +  ucwords(hospitals[counter]['status']));
+            marker.bindPopup("<strong>" + hospitals[counter]['cfname'] + "</strong> <br/> "
+            + "City: " + ( hospitals[counter]['city_mun'] != '' ? ucwords(hospitals[counter]['city_mun']) : 'N/A' ));
             markers.addLayer(marker);
         }
 
