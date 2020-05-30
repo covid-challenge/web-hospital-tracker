@@ -16,13 +16,21 @@
     <link rel="stylesheet" href="{{asset('app/css/style.css')}}">
     <link rel="stylesheet" href="{{asset('app/css/custom.css')}}">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-        crossorigin=""/>
+    <link rel="stylesheet" href="css/leaflet.css"/>
+    <script src="js/leaflet.js"></script>
 
-    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-        crossorigin=""></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"> </script>
+
+    <script src="js/bootstrap.min.js"> </script>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+
+    <script src="js/leaflet.markercluster.js"></script>
+    <link rel="stylesheet" href="css/MarkerCluster.css">
+    <link rel="stylesheet" href="css/MarkerCluster.Default.css">
+
+    <script src="js/bootstrap.bundle.min.js"> </script>
+
 
     <!--[if lt IE 9]>
         <script src="assets/bower_components/html5shiv/dist/html5shiv.min.js"></script>
@@ -74,7 +82,9 @@
       </footer>
 
   </main>
+
   @include('modals.onboarding')
+
   <script src="{{asset('app/js/vendor/jquery-3.4.1.min.js')}}"></script>
   <script src="{{asset('app/js/vendor/popper.min.js')}}"></script>
   <script src="{{asset('app/js/vendor/bootstrap.min.js')}}"></script>
@@ -87,5 +97,7 @@
 
   <script src="{{asset('app/js/custom.js')}}"></script>
   <script src="{{asset('app/js/searchHospital.js')}}"></script>
+
+  @stack('scripts')
 </body>
 </html>

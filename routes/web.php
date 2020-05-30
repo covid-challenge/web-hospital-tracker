@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
 
 Route::resource('index','HospitalController');
 Route::post('search-hospital' , 'HospitalController@searchHospital');
+Route::resource('/', 'HospitalController');
