@@ -12,26 +12,24 @@ class HospitalResourceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
 
         $radiusOfEarthInKilometers = 6371;
-        $latOfBoundingCircle = 14.5680867;
-        $longOfBoundingCircle = 120.8805591;
-        $radiusOfManilaInKilometers = 200;
+        $latOfBoundingCircle = $request->input("lat");
+        $longOfBoundingCircle = $request->input("lng");
+        $radiusOfLocationsToSearchInKilometers = 10;
         
 
         // computations
-        $minLat = $latOfBoundingCircle - $radiusOfManilaInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
-        $maxLat = $latOfBoundingCircle + $radiusOfManilaInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
-        $minLong = $longOfBoundingCircle - $radiusOfManilaInKilometers / $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
-        $maxLong = $longOfBoundingCircle + $radiusOfManilaInKilometers/ $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
+        $minLat = $latOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
+        $maxLat = $latOfBoundingCircle + $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
+        $minLong = $longOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
+        $maxLong = $longOfBoundingCircle + $radiusOfLocationsToSearchInKilometers/ $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
 
-        // $data = Hospital::whereBetween("lat", [$minLat, $maxLat])
-        //                 ->whereBetween("lng", [$minLong, $maxLong])
-        //                 ->get();
-
-        $data = Hospital::all();
+        $data = Hospital::whereBetween("lat", [$minLat, $maxLat])
+                        ->whereBetween("lng", [$minLong, $maxLong])
+                        ->paginate(40);
 
         return response()->json($data);
     }
