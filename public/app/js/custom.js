@@ -25,7 +25,7 @@ let Map = (function(){
       var latlng = $(this).data('coordinates');
       var lat = latlng.split('/')[0];
       var lng = latlng.split('/')[1];
-      console.log(latlng);
+
       if(latlng === '/'){
         var onboarding = $('[data-remodal-id=onboarding]').remodal();
         $('.ct-modal__content').html('');
