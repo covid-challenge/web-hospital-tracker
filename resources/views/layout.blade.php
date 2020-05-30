@@ -12,6 +12,7 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
     <!-- sass file compilation -->
+
     <link rel="stylesheet" href="{{asset('app/css/style.css')}}">
     <link rel="stylesheet" href="{{asset('app/css/custom.css')}}">
 
@@ -65,7 +66,7 @@
       </footer>
 
   </main>
-
+  @include('modals.onboarding')
   <script src="{{asset('app/js/vendor/jquery-3.4.1.min.js')}}"></script>
   <script src="{{asset('app/js/vendor/popper.min.js')}}"></script>
   <script src="{{asset('app/js/vendor/bootstrap.min.js')}}"></script>
