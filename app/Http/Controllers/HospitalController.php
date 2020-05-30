@@ -35,8 +35,8 @@ class HospitalController extends Controller
       try {
         $data = $search->data;
 
-        $hospitals = Hospital::where('name', 'like', '%' . $data . '%')
-                             ->orWhere('city', 'like', '%' . $data . '%')->take(30)->get();
+        $hospitals = Hospital::where('cfname', 'like', '%' . $data . '%')
+                             ->orWhere('city_mun', 'like', '%' . $data . '%')->take(30)->get();
         return new ResponseResource($hospitals);
       } catch (\Exception $e) {
         return new ResponseResource($e);

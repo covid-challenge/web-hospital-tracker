@@ -13,17 +13,27 @@ class CreateHospitalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('hospitals', function (Blueprint $table) {
+        Schema::create('hospital', function (Blueprint $table) {
             $table->id();
-            $table->string('lat')->nullable();
-            $table->string('lng')->nullable();
-            $table->string('name')->nullable();
-            $table->text('address')->nullable();
-            $table->text('city')->nullable();
-            $table->string('operator_type');
-            $table->string('amenity')->default('Unspecified');
-            $table->string('status')->default('Unspecified');
-            $table->integer('accommodate_emergencies')->default(0);
+            $table->string('cfname')->nullable();
+            $table->string('updateddate')->nullable();
+            $table->string('addeddate')->nullable();
+            $table->string('reportdate')->nullable();
+            $table->integer('gown')->default(0);
+            $table->integer('gloves')->default(0);
+            $table->integer('head_cover')->default(0);
+            $table->integer('goggles')->default(0);
+            $table->integer('coverall')->default(0);
+            $table->integer('shoe_cover')->default(0);
+            $table->integer('face_shield')->default(0);
+            $table->integer('surgmask')->default(0);
+            $table->integer('n95mask')->default(0);
+            $table->string('region')->nullable();
+            $table->string('province')->nullable();
+            $table->string('city')->nullable();
+            $table->decimal('lat')->nullable();
+            $table->decimal('lng')->nullable();
+
             $table->timestamps();
         });
     }
