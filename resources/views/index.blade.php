@@ -25,15 +25,20 @@
         {
             var marker = L.marker([hospitals[counter]['lat'], hospitals[counter]['lng']]);
             marker.bindPopup("<strong>" + hospitals[counter]['name'] + "</strong> <br/> "
-            + "City: " + ( hospitals[counter]['city'] != '' ? hospitals[counter]['city'] : 'N/A' ) + "<br/>"
-            + "Operator Type: " + hospitals[counter]['operator_type'] + "<br/>"
-            + "Amenity: " + hospitals[counter]['amenity'] + "<br/>"
-            + "Status: " +  hospitals[counter]['status']);
+            + "City: " + ( hospitals[counter]['city'] != '' ? ucwords(hospitals[counter]['city']) : 'N/A' ) + "<br/>"
+            + "Operator Type: " + ucwords(hospitals[counter]['operator_type']) + "<br/>"
+            + "Amenity: " + ucwords(hospitals[counter]['amenity']) + "<br/>"
+            + "Status: " +  ucwords(hospitals[counter]['status']));
             markers.addLayer(marker);
         }
 
         map.addLayer(markers);
-
+        
+        function ucwords (str) {
+            return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($word) {
+                return $word.toUpperCase();
+            });
+        }   
     </script>
 
 @endpush
