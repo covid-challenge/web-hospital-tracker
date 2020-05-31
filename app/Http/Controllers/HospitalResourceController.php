@@ -99,17 +99,22 @@ class HospitalResourceController extends Controller
             $minLong = $longOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
             $maxLong = $longOfBoundingCircle + $radiusOfLocationsToSearchInKilometers/ $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
 
-            $data = Hospital::whereNotNull("lat")
+            $data = Hospital::select("*")
+                            ->whereNotNull("lat")
                             ->whereNotNull("lng")
                             ->whereBetween("lat", [$minLat, $maxLat])
                             ->whereBetween("lng", [$minLong, $maxLong])
+                            ->addSelect(DB::raw("acos(sin($latOfBoundingCircle)*sin(radians(hospital.lat)) + cos(hospital.lat)*cos(radians(hospital.lat))*cos(radians(hospital.lng)-$longOfBoundingCircle)) * $radiusOfEarthInKilometers as distance"
+                            ))
+                            ->orderBy('distance', 'asc')
                             ->paginate(40);
 
             $data->transform($this->dataTransformer);
 
+            return response()->json($data);
             return new ResponseResource($data);
         } catch (\Exception $e) {
-            return new ResponseResource($e);
+            dd($e);
         }
     }
 
