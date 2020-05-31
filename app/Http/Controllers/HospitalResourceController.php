@@ -9,6 +9,77 @@ use App\Http\Resources\ResponseResource;
 
 class HospitalResourceController extends Controller
 {
+
+    private $dataTransformer;
+
+    public function __construct() {
+        $this->dataTransformer = function($item, $key) {
+            $finalData = [];
+            $ppe = [];
+            $address = [];
+            $infectedBreakdown = [];
+
+            $totalInfected = 0;
+
+            $parsedJson = json_decode($item);
+
+            foreach($parsedJson as $itemKey => $value) {
+                switch($itemKey) {
+                    // ppe
+                    case "gown":
+                    case "gloves":
+                    case "head_cover":
+                    case "goggles":
+                    case "coverall":
+                    case "shoe_cover":
+                    case "face_shield":
+                    case "surgmask":
+                    case "n95mask":
+                        $ppe[$itemKey] = $value;
+                        break;
+
+                    case "city_mun":
+                        $address["city"] = $value;
+                        break;
+
+                    case "province":
+                    case "region":
+                        $address[$itemKey] = $value;
+                        break;
+
+                    case "icu_o":
+                        $infectedBreakdown["icu"] = $value;
+                        $totalInfected += $value;
+                        break;
+                    case "isolbed_o":
+                        $infectedBreakdown["isolation"] = $value;
+                        $totalInfected += $value;
+                        break;
+                    case "beds_ward_o":
+                        $infectedBreakdown["ward"] = $value;
+                        $totalInfected += $value;
+                        break;
+
+                    case "cfname":
+                        $finalData["name"] = $value;
+                        break;
+
+                    default:
+                        $finalData[$itemKey] = $value;
+                        break;
+                }
+            }
+
+            $finalData["ppe"] = $ppe;
+            $finalData["address"] = $address;
+            $finalData["infected"] = [
+                "total" => $totalInfected,
+                "breakdown" => $infectedBreakdown
+            ];
+            return $finalData;
+        };
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -43,52 +114,7 @@ class HospitalResourceController extends Controller
                             ->whereBetween("lng", [$minLong, $maxLong])
                             ->paginate(40);
 
-            $data->transform(function($item, $key) {
-                $finalData = [];
-                $ppe = [];
-                $address = [];
-
-                $parsedJson = json_decode($item);
-
-                foreach($parsedJson as $itemKey => $value) {
-                    switch($itemKey) {
-                        // ppe
-                        case "gown":
-                        case "gloves":
-                        case "head_cover":
-                        case "goggles":
-                        case "coverall":
-                        case "shoe_cover":
-                        case "face_shield":
-                        case "surgmask":
-                        case "n95mask":
-                            $ppe[$itemKey] = $value;
-                            break;
-
-                        case "city_mun":
-                            $address["city"] = $value;
-                            break;
-
-                        case "province":
-                        case "region":
-                            $address[$itemKey] = $value;
-                            break;
-
-
-                        case "cfname":
-                            $finalData["name"] = $value;
-                            break;
-
-                        default:
-                            $finalData[$itemKey] = $value;
-                            break;
-                    }
-                }
-
-                $finalData["ppe"] = $ppe;
-                $finalData["address"] = $address;
-                return $finalData;
-            });
+            $data->transform($this->dataTransformer);
 
             return new ResponseResource($data);
         } catch (\Exception $e) {
@@ -113,52 +139,7 @@ class HospitalResourceController extends Controller
                             ->where("real_hospitals.cfname", "like", $request->input("q") . "%")
                             ->paginate(40);
 
-            $hospitalBeingSearched->transform(function($item, $key) {
-                $finalData = [];
-                $ppe = [];
-                $address = [];
-
-                $parsedJson = json_decode($item);
-
-                foreach($parsedJson as $itemKey => $value) {
-                    switch($itemKey) {
-                        // ppe
-                        case "gown":
-                        case "gloves":
-                        case "head_cover":
-                        case "goggles":
-                        case "coverall":
-                        case "shoe_cover":
-                        case "face_shield":
-                        case "surgmask":
-                        case "n95mask":
-                            $ppe[$itemKey] = $value;
-                            break;
-
-                        case "city_mun":
-                            $address["city"] = $value;
-                            break;
-
-                        case "province":
-                        case "region":
-                            $address[$itemKey] = $value;
-                            break;
-
-
-                        case "cfname":
-                            $finalData["name"] = $value;
-                            break;
-
-                        default:
-                            $finalData[$itemKey] = $value;
-                            break;
-                    }
-                }
-
-                $finalData["ppe"] = $ppe;
-                $finalData["address"] = $address;
-                return $finalData;
-            });
+            $hospitalBeingSearched->transform($this->dataTransformer);
 
             return new ResponseResource($hospitalBeingSearched);
         } catch (\Exception $e) {

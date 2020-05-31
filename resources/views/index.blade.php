@@ -3,9 +3,9 @@
 @section('page-body')
     <!-- provide the csrf token -->
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <div class="map_holder">
+    <!-- <div class="map_holder"> -->
       <div id="map"></div>
-    </div>
+    <!-- </div> -->
 
 @endsection
 
