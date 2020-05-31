@@ -25,7 +25,6 @@ let Map = (function(){
       var latlng = $(this).data('coordinates');
       var lat = latlng.split('/')[0];
       var lng = latlng.split('/')[1];
-      // console.log(latlng);
       if(latlng === '/'){
         var onboarding = $('[data-remodal-id=onboarding]').remodal();
         $('.ct-modal__content').html('');
@@ -33,19 +32,10 @@ let Map = (function(){
                                             No coordinates available
                                         </h1>`);
         onboarding.open();
-      }
-      else {
-
-        var map = new L.map('map').setView([lat, lng], 20);
-
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-
+      } else {
+        map.setView([lat, lng], 30);
       }
     }
-
-
     // function onLoadRedirect(){
     //   var map = L.map('map').setView([-41.2858, 174.78682], 14);
     //
@@ -72,3 +62,108 @@ let Map = (function(){
 $(document).ready(function(){
     Map.init();
 });
+
+var populationDensityLayerGroup = new L.LayerGroup();
+// control that shows state info on hover
+var info = L.control();
+
+function enablePopulationDensityMap()
+{
+    populationDensityLayerGroup = new L.LayerGroup();
+    populationDensityLayerGroup.addTo(map);
+    
+    $('.density-toggle-on').hide();
+    $('.density-toggle-off').show();
+
+
+    $.getJSON("luzon_pop_density.geojson", function(data){
+        densityGeoJson = L.geoJson(data, {
+            style: style,
+            onEachFeature: onEachFeature,
+        }).addTo(populationDensityLayerGroup);
+    });
+
+    // get color depending on population density value
+    function getColor(density) {
+        if (density > 1000)
+            return "#800026";
+        else if (density > 500)
+            return "#BD0026";
+        else if (density > 200)
+            return "#E31A1C";
+        else if (density > 100)
+            return "#FC4E2A";
+        else if (density > 50)
+            return "#FD8D3C";
+        else if (density > 20)
+            return "#FEB24C";
+        else if (density > 10)
+            return "#FED976";
+        else
+            return "#FFEDA0";
+    }
+
+    info.onAdd = function() {
+        this._div = L.DomUtil.create("div", "info");
+        this.update();
+        return this._div;
+      };
+
+    info.update = function(props) {
+        this._div.innerHTML =
+          "<span style='color:white;'>" + "<h4>Philippine Population Density</h4>" +
+          (props
+            ? ("<h5 style='font-size:16px;'>" + props.DN  + " people / mi<sup>2</sup> </h5>") : "<h5 style='font-size:16px;'> Hover over a location </h5>");
+          + "</span>";
+    };
+
+    info.addTo(map);
+
+    function highlightFeature(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+          weight: 5,
+          color: "#666",
+          dashArray: "",
+          fillOpacity: 0.7
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          layer.bringToFront();
+        }
+
+        info.update(layer.feature.properties);
+    }
+
+    function style(feature) {
+        return {
+            weight: 2,
+            opacity: 0,
+            color: "black",
+            dashArray: "3",
+            fillOpacity: 0.7,
+            fillColor: getColor(feature.properties.DN)
+        };
+    }
+
+    function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            click: zoomToFeature
+        });
+    }
+}
+
+function disablePopulationDensityMap()
+{
+    map.removeLayer(populationDensityLayerGroup);
+    map.removeControl(info);
+
+    $('.density-toggle-on').show();
+    $('.density-toggle-off').hide();
+}
