@@ -3,8 +3,8 @@
 @section('page-body')
     <!-- provide the csrf token -->
     <meta name="csrf-token" content="{{ csrf_token() }}" />
-    <!-- <div class="map_holder"> -->
-      <div id="map"></div>
+    <div id="map"></div>
+  </div>
     <!-- </div> -->
 
 @endsection
@@ -15,8 +15,7 @@
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             tms: false,
         }).addTo(map);
-        var polygonFeatureGroup = L.featureGroup().addTo(map);
-        var geoJsonFeatureGroup = L.featureGroup().addTo(map);
+
         var hospitals = JSON.parse( JSON.stringify( {!! json_encode($hospitals) !!} ) );
 
         var markers = L.markerClusterGroup();
@@ -27,14 +26,17 @@
             marker.bindPopup("<strong>" + hospitals[counter]['cfname'] + "</strong> <br/> "
             + "City: " + ( hospitals[counter]['city_mun'] != '' ? ucwords(hospitals[counter]['city_mun']) : 'N/A') + "<br/>"
             + "Cases: " + ( hospitals[counter]['isolbed_o'] + hospitals[counter]['beds_ward_o'] + hospitals[counter]['icu_o'] ) );
+            
             marker.on('mouseover', function (e) {
                 this.openPopup();
             });
             marker.on('mouseout', function (e) {
                 this.closePopup();
             });
+            
             markers.addLayer(marker);
         }
+
         map.addLayer(markers);
 
         enablePopulationDensityMap();
@@ -44,5 +46,6 @@
                 return $word.toUpperCase();
             });
         }
+
     </script>
 @endpush

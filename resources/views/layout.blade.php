@@ -59,15 +59,19 @@
                     <input class="ct-activity__search_input" data-url="{{url('search-hospital')}}" value="" type="text" name="search" placeholder="Search your hospital...">
                 </div>
             </div>
+            <div class="pt-3 pb-3">
+                <button class="btn btn-danger density-toggle-off" onclick="disablePopulationDensityMap()">Disable Chloropleth Map</button>
+                <button class="btn btn-primary density-toggle-on" onclick="enablePopulationDensityMap()">Enable Chloropleth Map</button>
+            </div>
             <div class="header_default">
-              <h1 class="mt-5">HospitALL</h1>
+              <h1 class="mt-2">HospitALL</h1>
               <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
               </p>
             </div>
             <div class="container_header" style="display:none !important;">
-              <h1 class="mt-5 search_header">Search results</h1>
+              <h1 class="mt-2 search_header">Search results</h1>
                <div class="ct-activity__container wt-container">
 
                </div>

@@ -32,8 +32,7 @@ let Map = (function(){
                                             No coordinates available
                                         </h1>`);
         onboarding.open();
-      }
-      else {
+      } else {
         map.setView([lat, lng], 30);
       }
     }
@@ -64,13 +63,24 @@ $(document).ready(function(){
     Map.init();
 });
 
+var populationDensityLayerGroup = new L.LayerGroup();
+// control that shows state info on hover
+var info = L.control();
+
 function enablePopulationDensityMap()
 {
-    densityGeoJson = $.getJSON("luzon_pop_density.geojson", function(data){
-        L.geoJson(data, {
+    populationDensityLayerGroup = new L.LayerGroup();
+    populationDensityLayerGroup.addTo(map);
+    
+    $('.density-toggle-on').hide();
+    $('.density-toggle-off').show();
+
+
+    $.getJSON("luzon_pop_density.geojson", function(data){
+        densityGeoJson = L.geoJson(data, {
             style: style,
-            onEachFeature: onEachFeature
-        }).addTo(map);
+            onEachFeature: onEachFeature,
+        }).addTo(populationDensityLayerGroup);
     });
 
     // get color depending on population density value
@@ -93,39 +103,36 @@ function enablePopulationDensityMap()
             return "#FFEDA0";
     }
 
-        // control that shows state info on hover
-        var info = L.control();
+    info.onAdd = function() {
+        this._div = L.DomUtil.create("div", "info");
+        this.update();
+        return this._div;
+      };
 
-        info.onAdd = function(map) {
-          this._div = L.DomUtil.create("div", "info");
-          this.update();
-          return this._div;
-        };
-    
-        info.update = function(props) {
-          this._div.innerHTML =
-            "<span style='color:white;'>" + "<h4>Philippine Population Density</h4>" +
-            (props
-              ? ("<b>" + props.DN +"</b>" + " people / mi<sup>2</sup>") : "Hover over a state");
-            + "</span>";
-        };
-    
-        info.addTo(map);
+    info.update = function(props) {
+        this._div.innerHTML =
+          "<span style='color:white;'>" + "<h4>Philippine Population Density</h4>" +
+          (props
+            ? ("<h5 style='font-size:16px;'>" + props.DN  + " people / mi<sup>2</sup> </h5>") : "<h5 style='font-size:16px;'> Hover over a location </h5>");
+          + "</span>";
+    };
+
+    info.addTo(map);
 
     function highlightFeature(e) {
         var layer = e.target;
-  
+
         layer.setStyle({
           weight: 5,
           color: "#666",
           dashArray: "",
           fillOpacity: 0.7
         });
-  
+
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
           layer.bringToFront();
         }
-  
+
         info.update(layer.feature.properties);
     }
 
@@ -150,4 +157,13 @@ function enablePopulationDensityMap()
             click: zoomToFeature
         });
     }
+}
+
+function disablePopulationDensityMap()
+{
+    map.removeLayer(populationDensityLayerGroup);
+    map.removeControl(info);
+
+    $('.density-toggle-on').show();
+    $('.density-toggle-off').hide();
 }
