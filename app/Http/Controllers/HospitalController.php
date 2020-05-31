@@ -86,13 +86,13 @@ class HospitalController extends Controller
     public function index()
     {
       $subquery = DB::table('hospital')
-      ->select(DB::raw("MAX(updated_date) as updated_date, cfname"))
+      ->select(DB::raw("MAX(weekly_report_updated_date) as weekly_report_updated_date, cfname"))
       ->groupBy('cfname');
 
       $hospitals = Hospital::from("hospital as real_hospitals")
       ->joinSub($subquery, "grouped_hospitals", function($join) {
           $join->on("real_hospitals.cfname", "=", "grouped_hospitals.cfname")
-              ->on("real_hospitals.updated_date", "=", "grouped_hospitals.updated_date");
+              ->on("real_hospitals.weekly_report_updated_date", "=", "grouped_hospitals.weekly_report_updated_date");
       })
       ->whereNotNull('lat')
       ->whereNotNull('lng')
@@ -107,6 +107,7 @@ class HospitalController extends Controller
       $longOfBoundingCircle = $search->lng;
       try {
 
+<<<<<<< HEAD
             $hospitalBeingSearched =  Hospital::select(DB::raw("
                     *, SQRT(
                         POW(69.1 * (lat - $latOfBoundingCircle), 2) +
@@ -117,6 +118,14 @@ class HospitalController extends Controller
             ->whereNotNull("lat")
             ->whereNotNull("lng")
             ->take(40)->get();
+=======
+            $hospitalBeingSearched = Hospital::where("cfname", "like", "%" . $data . "%")
+                                            ->orWhere("city_mun", "like", "%" . $data . "%")
+                                            ->whereNotNull("lat")
+                                            ->whereNotNull("lng")
+                                            ->take(40)
+                                            ->get();
+>>>>>>> 2ba85ed824291534bb54bb0c7d83c689f83815c6
 
             $hospitalBeingSearched->transform($this->dataTransformer);
 
