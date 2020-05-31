@@ -16,4 +16,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('index','HospitalController');
 Route::post('search-hospital' , 'HospitalController@searchHospital');
+Route::post('nearest-hospital' , 'HospitalController@nearestHospitals');
 Route::resource('/', 'HospitalController');

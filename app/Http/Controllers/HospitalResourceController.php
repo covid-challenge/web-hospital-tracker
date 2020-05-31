@@ -20,9 +20,9 @@ class HospitalResourceController extends Controller
             $infectedBreakdown = [];
 
             $totalInfected = 0;
-    
+
             $parsedJson = json_decode($item);
-        
+
             foreach($parsedJson as $itemKey => $value) {
                 switch($itemKey) {
                     // ppe
@@ -37,16 +37,16 @@ class HospitalResourceController extends Controller
                     case "n95mask":
                         $ppe[$itemKey] = $value;
                         break;
-                    
+
                     case "city_mun":
                         $address["city"] = $value;
                         break;
-    
+
                     case "province":
                     case "region":
                         $address[$itemKey] = $value;
                         break;
-                    
+
                     case "icu_o":
                         $infectedBreakdown["icu"] = $value;
                         $totalInfected += $value;
@@ -59,17 +59,17 @@ class HospitalResourceController extends Controller
                         $infectedBreakdown["ward"] = $value;
                         $totalInfected += $value;
                         break;
-                    
+
                     case "cfname":
                         $finalData["name"] = $value;
                         break;
-                    
+
                     default:
                         $finalData[$itemKey] = $value;
                         break;
                 }
             }
-    
+
             $finalData["ppe"] = $ppe;
             $finalData["address"] = $address;
             $finalData["infected"] = [

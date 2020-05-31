@@ -25,7 +25,6 @@ let Map = (function(){
       var latlng = $(this).data('coordinates');
       var lat = latlng.split('/')[0];
       var lng = latlng.split('/')[1];
-
       if(latlng === '/'){
         var onboarding = $('[data-remodal-id=onboarding]').remodal();
         $('.ct-modal__content').html('');
@@ -35,11 +34,9 @@ let Map = (function(){
         onboarding.open();
       }
       else {
-          map.setView(new L.LatLng(lat, lng), 30);
+        map.setView([lat, lng], 30);
       }
     }
-
-
     // function onLoadRedirect(){
     //   var map = L.map('map').setView([-41.2858, 174.78682], 14);
     //
