@@ -39,7 +39,7 @@
 
         map.addLayer(markers);
 
-        enablePopulationDensityMap();
+        disablePopulationDensityMap();
           var onboarding = $('[data-remodal-id=onboarding]').remodal();
           onboarding.open();
     </script>
