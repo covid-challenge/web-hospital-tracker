@@ -21,13 +21,32 @@ let SearchHospital = (function(){
     }
 
     function bindEvents() {
-        $(document).on('keyup', ui.search , searchHospital);
+        $(document).on('keyup', ui.search , initSearchGeolocation);
     }
 
     function OnLoad(){
       initGeolocation();
       // onLoadMap();
     }
+
+    function initSearchGeolocation()
+     {
+       if ("geolocation" in navigator){
+       //check geolocation available
+       //try to get user current location using getCurrentPosition() method
+       navigator.geolocation.getCurrentPosition(function(position){
+          SearchHospital.lat = position.coords.latitude;
+          SearchHospital.long = position.coords.longitude;
+          searchHospital();
+        });
+       }else{
+         //browser not supported geolocation
+         SearchHospital.long = 121.02156182531817;
+         SearchHospital.lat = 14.567264226512432;
+         searchHospital();
+         alert('browser not supported geolocation');
+       }
+     }
 
     function searchHospital(){
       var $url = $(ui.search).data('url');
@@ -81,6 +100,25 @@ let SearchHospital = (function(){
        }
      }
 
+    function initGeolocationNearest()
+     {
+       if ("geolocation" in navigator){
+       //check geolocation available
+       //try to get user current location using getCurrentPosition() method
+       navigator.geolocation.getCurrentPosition(function(position){
+          SearchHospital.lat = position.coords.latitude;
+          SearchHospital.long = position.coords.longitude;
+          nearestHospitals();
+        });
+       }else{
+         //browser not supported geolocation
+         SearchHospital.long = 121.02156182531817;
+         SearchHospital.lat = 14.567264226512432;
+         nearestHospitals();
+         alert('browser not supported geolocation');
+       }
+     }
+
      function nearestHospitals(){
        var $url = $(ui.nearestHospital).val();
        var $token = $(ui.token).val();
@@ -103,10 +141,26 @@ let SearchHospital = (function(){
                          <div class="content__block card__content mt-2 ml-2">
                              <span class="text-danger">Infected: ${val.infected.total}</span>
                          </div>
+                         <div class="content__block card__content mt-2 ml-2">
+                             <span class="">Distance: ${distanceParser(parseFloat(val.distance * 1000))}</span>
+                         </div>
                        </div>`;
-           $(ui.container).append($result);
+           if(val.lat != null || val.lng != null){
+             $(ui.container).append($result);
+           }
          });
        });
+     }
+
+     function distanceParser(distance){
+       if(distance > 1000){
+         distance = (distance / 1000).toFixed(2) + ' KM';
+       }else if (distance > 1 && distance < 1000) {
+         distance = distance.toFixed(2) + ' M'
+       }else {
+         distance = (distance * 100).toFixed(2) + ' CM'
+       }
+       return distance;
      }
 
     function init(){
