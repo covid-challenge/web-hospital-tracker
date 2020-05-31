@@ -17,6 +17,9 @@ class HospitalResourceController extends Controller
             $finalData = [];
             $ppe = [];
             $address = [];
+            $infectedBreakdown = [];
+
+            $totalInfected = 0;
     
             $parsedJson = json_decode($item);
         
@@ -44,6 +47,18 @@ class HospitalResourceController extends Controller
                         $address[$itemKey] = $value;
                         break;
                     
+                    case "icu_o":
+                        $infectedBreakdown["icu"] = $value;
+                        $totalInfected += $value;
+                        break;
+                    case "isolbed_o":
+                        $infectedBreakdown["isolation"] = $value;
+                        $totalInfected += $value;
+                        break;
+                    case "beds_ward_o":
+                        $infectedBreakdown["ward"] = $value;
+                        $totalInfected += $value;
+                        break;
                     
                     case "cfname":
                         $finalData["name"] = $value;
@@ -57,6 +72,10 @@ class HospitalResourceController extends Controller
     
             $finalData["ppe"] = $ppe;
             $finalData["address"] = $address;
+            $finalData["infected"] = [
+                "total" => $totalInfected,
+                "breakdown" => $infectedBreakdown
+            ];
             return $finalData;
         };
     }
