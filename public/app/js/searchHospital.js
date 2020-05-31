@@ -100,8 +100,7 @@ let SearchHospital = (function(){
           nearestHospitals();
         });
        }else{
-         nearestHospitals();
-         alert('browser not supported geolocation');
+          alert('Geolocation is not supported for your browser. Please use a browser that supports this feature and try again.');
        }
      }
 
