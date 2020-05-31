@@ -99,16 +99,7 @@ class HospitalResourceController extends Controller
             $minLong = $longOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
             $maxLong = $longOfBoundingCircle + $radiusOfLocationsToSearchInKilometers/ $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
 
-            $subquery = DB::table('hospital')
-                            ->select(DB::raw("MAX(updated_date) as updated_date, cfname"))
-                            ->groupBy('cfname');
-
-            $data = Hospital::from("hospital as real_hospitals")
-                            ->joinSub($subquery, "grouped_hospitals", function($join) {
-                                $join->on("real_hospitals.cfname", "=", "grouped_hospitals.cfname")
-                                    ->on("real_hospitals.updated_date", "=", "grouped_hospitals.updated_date");
-                            })
-                            ->whereNotNull("lat")
+            $data = Hospital::whereNotNull("lat")
                             ->whereNotNull("lng")
                             ->whereBetween("lat", [$minLat, $maxLat])
                             ->whereBetween("lng", [$minLong, $maxLong])
@@ -125,19 +116,11 @@ class HospitalResourceController extends Controller
     public function search(Request $request) {
         try {
 
-            $subquery = DB::table('hospital')
-                        ->select(DB::raw("MAX(updated_date) as updated_date, cfname"))
-                        ->groupBy('cfname');
-
-            $hospitalBeingSearched = Hospital::from("hospital as real_hospitals")
-                            ->joinSub($subquery, "grouped_hospitals", function($join) {
-                                $join->on("real_hospitals.cfname", "=", "grouped_hospitals.cfname")
-                                    ->on("real_hospitals.updated_date", "=", "grouped_hospitals.updated_date");
-                            })
-                            ->whereNotNull("lat")
-                            ->whereNotNull("lng")
-                            ->where("real_hospitals.cfname", "like", $request->input("q") . "%")
-                            ->paginate(40);
+            $hospitalBeingSearched = Hospital::whereNotNull("lat")
+                                            ->whereNotNull("lng")
+                                            ->where("cfname", "like", $request->input("q") . "%")
+                                            ->orWhere("city_mun", "like", $request->input("q") . "%")
+                                            ->paginate(40);
 
             $hospitalBeingSearched->transform($this->dataTransformer);
 
