@@ -20,10 +20,6 @@ let SearchHospital = (function(){
         $(document).on('keyup', ui.search , searchHospital);
     }
 
-    function OnLoad(){
-
-    }
-
     function searchHospital(){
       var $url = $(ui.search).data('url');
       var $searchData = $(ui.search).val();
@@ -32,29 +28,29 @@ let SearchHospital = (function(){
       $.post($url,{"_token": $token,'data': $searchData},function(response){
         var data = response.data;
         var $result = '';
-
+        
       if($(ui.search).val() != ''){
         $(ui.container).html($result);
-        $.each(data, function(key , val){
-          $(ui.header_container).removeAttr('style');
-          $(ui.header_default).prop('style', 'display:none !important;');
-           $result =  `<div class="ct-activity__card hospital__coordinates" data-coordinates="${val.lat + '/' + val.lng}">
-                         <div class="content__block card__content">
-                            <span>${val.cfname}</span>
-                        </div>
-                        <div class="content__block card__content mt-2 ml-2">
-                            ${val.city_mun}
-                        </div>
-                        <div class="content__block card__content mt-2 ml-2">
-                            <span class="text-danger">Infected: 12</span>
-                        </div>
-                      </div>`;
-          $(ui.container).append($result);
-        });
+            $.each(data, function(key , val){
+            $(ui.header_container).removeAttr('style');
+            $(ui.header_default).prop('style', 'display:none !important;');
+            $result =  `<div class="ct-activity__card hospital__coordinates" data-coordinates="${val.lat + '/' + val.lng}">
+                            <div class="content__block card__content">
+                                <span>${val.cfname}</span>
+                            </div>
+                            <div class="content__block card__content mt-2 ml-2">
+                                ${val.city_mun}
+                            </div>
+                            <div class="content__block card__content mt-2 ml-2">
+                                <span class="text-danger">Infected: ${val.icu_o} </span>
+                            </div>
+                        </div>`;
+            $(ui.container).append($result);
+            });
       }
       else{
-        $(ui.header_default).removeAttr('style');
-        $(ui.header_container).prop('style', 'display:none !important;');
+            $(ui.header_default).removeAttr('style');
+            $(ui.header_container).prop('style', 'display:none !important;');
       }
       });
     }

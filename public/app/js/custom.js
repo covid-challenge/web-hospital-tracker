@@ -67,9 +67,9 @@ $(document).ready(function(){
     Map.init();
 });
 
-function addChloroplethMap()
+function enablePopulationDensityMap()
 {
-    var geojsonLayer = $.getJSON("philippines_pop_density.geojson", function(data){
+    densityGeoJson = $.getJSON("luzon_pop_density.geojson", function(data){
         L.geoJson(data, {
             style: style,
             onEachFeature: onEachFeature

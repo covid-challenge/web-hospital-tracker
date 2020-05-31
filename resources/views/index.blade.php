@@ -18,7 +18,7 @@
         var polygonFeatureGroup = L.featureGroup().addTo(map);
         var geoJsonFeatureGroup = L.featureGroup().addTo(map);
         var hospitals = JSON.parse( JSON.stringify( {!! json_encode($hospitals) !!} ) );
-        
+
         var markers = L.markerClusterGroup();
         for(var counter = 0; counter < hospitals.length; counter++)
         {
@@ -30,8 +30,8 @@
 
         map.addLayer(markers);
 
-        addChloroplethMap();
-        
+        enablePopulationDensityMap();
+
         function ucwords (str) {
             return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($word) {
                 return $word.toUpperCase();
