@@ -60,8 +60,8 @@
                 </div>
             </div>
             <div class="p-3">
-                <button class="btn btn-danger density-toggle-off" onclick="disablePopulationDensityMap()">Disable Chloropleth Map</button>
-                <button class="btn btn-primary density-toggle-on" onclick="enablePopulationDensityMap()">Enable Chloropleth Map</button>
+                <button class="btn btn-danger density-toggle-off" onclick="disablePopulationDensityMap()">Hide Population Density</button>
+                <button class="btn btn-primary density-toggle-on" onclick="enablePopulationDensityMap()">Show Population Density</button>
             </div>
             <div class="header_default">
               <h1 class="mt-2">HospitALL</h1>
