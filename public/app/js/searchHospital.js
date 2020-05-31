@@ -1,9 +1,7 @@
 
 let SearchHospital = (function(){
 
-    let ui = {},
-    long = 121.02156182531817,
-    lat = 14.567264226512432;
+    let ui = {};
 
     function bindUi(){
 
@@ -51,7 +49,9 @@ let SearchHospital = (function(){
       var $url = $(ui.search).data('url');
       var $searchData = $(ui.search).val();
       var $token = $(ui.token).val();
+
       var data = {"_token": $token,"data": $searchData,'lng': SearchHospital.long,'lat': SearchHospital.lat};
+      
       if($(ui.search).val() != ''){
         $.post($url,data,function(response){
           var data = response.data;
@@ -60,7 +60,7 @@ let SearchHospital = (function(){
           $(ui.search_header).text('Search Results');
           $(ui.container).html($result);
           $.each(data, function(key , val){
-            var infected = parseInt(val.beds_ward_o + val.icu_o + val.isolbed_o);
+
             $(ui.header_container).removeAttr('style');
             $(ui.header_default).prop('style', 'display:none !important;');
              $result =  `<div class="ct-activity__card hospital__coordinates" data-coordinates="${val.lat + '/' + val.lng}">
@@ -87,43 +87,7 @@ let SearchHospital = (function(){
         initGeolocationNearest();
       }
     }
-
-    // function onLoadMap(){
-    //   // var map = L.map('map').setView([14.567264226512432, 121.02156182531817], 14.0);
-    //   var map = L.map('map').setView([SearchHospital.lat, SearchHospital.long], 14.0);
-    //   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    //       tms: false,
-    //   }).addTo(map);
-    //
-    //   var polygonFeatureGroup = L.featureGroup().addTo(map);
-    //   var geoJsonFeatureGroup = L.featureGroup().addTo(map);
-    //   var hospitals = hospital;
-    //
-    //   var markers = L.markerClusterGroup();
-    //
-    //   for(var counter = 0; counter < hospitals.length; counter++)
-    //   {
-    //       var marker = L.marker([hospitals[counter]['lat'], hospitals[counter]['lng']]);
-    //       marker.bindPopup("<strong>" + hospitals[counter]['name'] + "</strong> <br/> "
-    //       + "City: " + ( hospitals[counter]['city'] != '' ? ucwords(hospitals[counter]['city']) : 'N/A' ) + "<br/>"
-    //       + "Operator Type: " + ucwords(hospitals[counter]['operator_type']) + "<br/>"
-    //       + "Amenity: " + ucwords(hospitals[counter]['amenity']) + "<br/>"
-    //       + "Status: " +  ucwords(hospitals[counter]['status']));
-    //       markers.addLayer(marker);
-    //   }
-    //
-    //   map.addLayer(markers);
-    //
-    //   function ucwords (str) {
-    //       return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($word) {
-    //           return $word.toUpperCase();
-    //       });
-    //   }
-    //
-    //     var onboarding = $('[data-remodal-id=onboarding]').remodal();
-    //     onboarding.open();
-    // }
-
+    
     function initGeolocation()
      {
        if ("geolocation" in navigator){
@@ -132,14 +96,10 @@ let SearchHospital = (function(){
        navigator.geolocation.getCurrentPosition(function(position){
           SearchHospital.lat = position.coords.latitude;
           SearchHospital.long = position.coords.longitude;
-          // onLoadMap();
+          map.setView([SearchHospital.lat, SearchHospital.long], 30);
           nearestHospitals();
         });
        }else{
-         //browser not supported geolocation
-         SearchHospital.long = 121.02156182531817;
-         SearchHospital.lat = 14.567264226512432;
-         // onLoadMap();
          nearestHospitals();
          alert('browser not supported geolocation');
        }
