@@ -24,7 +24,8 @@
         {
             var marker = L.marker([hospitals[counter]['lat'], hospitals[counter]['lng']]);
             marker.bindPopup("<strong>" + hospitals[counter]['cfname'] + "</strong> <br/> "
-            + "City: " + ( hospitals[counter]['city_mun'] != '' ? ucwords(hospitals[counter]['city_mun']) : 'N/A' ));
+            + "City: " + ( hospitals[counter]['city_mun'] != '' ? ucwords(hospitals[counter]['city_mun']) : 'N/A') + "<br/>"
+            + "Cases: " + ( hospitals[counter]['isolbed_o'] + hospitals[counter]['beds_ward_o'] + hospitals[counter]['icu_o'] ) );
             markers.addLayer(marker);
         }
 

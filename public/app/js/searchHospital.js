@@ -42,7 +42,7 @@ let SearchHospital = (function(){
                                 ${val.city_mun}
                             </div>
                             <div class="content__block card__content mt-2 ml-2">
-                                <span class="text-danger">Infected: ${val.icu_o} </span>
+                                <span class="text-danger">Infected: ${ val.icu_o + val.beds_ward_o + val.isolbed_o } </span>
                             </div>
                         </div>`;
             $(ui.container).append($result);
