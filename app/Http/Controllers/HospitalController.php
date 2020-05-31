@@ -13,6 +13,76 @@ class HospitalController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+     private $dataTransformer;
+
+     public function __construct() {
+         $this->dataTransformer = function($item, $key) {
+             $finalData = [];
+             $ppe = [];
+             $address = [];
+             $infectedBreakdown = [];
+
+             $totalInfected = 0;
+
+             $parsedJson = json_decode($item);
+
+             foreach($parsedJson as $itemKey => $value) {
+                 switch($itemKey) {
+                     // ppe
+                     case "gown":
+                     case "gloves":
+                     case "head_cover":
+                     case "goggles":
+                     case "coverall":
+                     case "shoe_cover":
+                     case "face_shield":
+                     case "surgmask":
+                     case "n95mask":
+                         $ppe[$itemKey] = $value;
+                         break;
+
+                     case "city_mun":
+                         $address["city"] = $value;
+                         break;
+
+                     case "province":
+                     case "region":
+                         $address[$itemKey] = $value;
+                         break;
+
+                     case "icu_o":
+                         $infectedBreakdown["icu"] = $value;
+                         $totalInfected += $value;
+                         break;
+                     case "isolbed_o":
+                         $infectedBreakdown["isolation"] = $value;
+                         $totalInfected += $value;
+                         break;
+                     case "beds_ward_o":
+                         $infectedBreakdown["ward"] = $value;
+                         $totalInfected += $value;
+                         break;
+
+                     case "cfname":
+                         $finalData["name"] = $value;
+                         break;
+
+                     default:
+                         $finalData[$itemKey] = $value;
+                         break;
+                 }
+             }
+
+             $finalData["ppe"] = $ppe;
+             $finalData["address"] = $address;
+             $finalData["infected"] = [
+                 "total" => $totalInfected,
+                 "breakdown" => $infectedBreakdown
+             ];
+             return $finalData;
+         };
+     }
+     
     public function index()
     {
       $subquery = DB::table('hospital')
@@ -32,40 +102,47 @@ class HospitalController extends Controller
     }
 
     public function searchHospital(Request $search){
+      $data = $search->data;
       try {
-        $data = $search->data;
 
-        $hospitals = Hospital::where('cfname', 'like', '%' . $data . '%')
-                             ->orWhere('city_mun', 'like', '%' . $data . '%')->take(30)->get();
-        return new ResponseResource($hospitals);
-      } catch (\Exception $e) {
-        return new ResponseResource($e);
-      }
+            $hospitalBeingSearched = Hospital::whereNotNull("lat")
+                                            ->whereNotNull("lng")
+                                            ->where("cfname", "like", "%" . $data . "%")
+                                            ->orWhere("city_mun", "like", "%" . $data . "%")
+                                            ->take(40)->get();
+
+            $hospitalBeingSearched->transform($this->dataTransformer);
+
+            return new ResponseResource($hospitalBeingSearched);
+        } catch (\Exception $e) {
+            return new ResponseResource($e);
+        }
     }
 
     public function nearestHospitals(Request $request){
       try {
-        $radiusOfEarthInKilometers = 6371;
-        $latOfBoundingCircle = $request->input("lat");
-        $longOfBoundingCircle = $request->input("lng");
-        $radiusOfLocationsToSearchInKilometers = 10;
+          $radiusOfEarthInKilometers = 6371;
+          $latOfBoundingCircle = $request->input("lat");
+          $longOfBoundingCircle = $request->input("lng");
+          $radiusOfLocationsToSearchInKilometers = 10;
 
-        // computations
-        $minLat = $latOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
-        $maxLat = $latOfBoundingCircle + $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
-        $minLong = $longOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
-        $maxLong = $longOfBoundingCircle + $radiusOfLocationsToSearchInKilometers/ $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
+          // computations
+          $minLat = $latOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
+          $maxLat = $latOfBoundingCircle + $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
+          $minLong = $longOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
+          $maxLong = $longOfBoundingCircle + $radiusOfLocationsToSearchInKilometers/ $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
 
-        $data = Hospital::whereBetween("lat", [$minLat, $maxLat])
-                        ->whereBetween("lng", [$minLong, $maxLong])
-                        ->take(30)->get();
+          $data = Hospital::whereNotNull("lat")
+                          ->whereNotNull("lng")
+                          ->whereBetween("lat", [$minLat, $maxLat])
+                          ->whereBetween("lng", [$minLong, $maxLong])
+                          ->take(40)->get();
 
-        return new ResponseResource($data);
+          $data->transform($this->dataTransformer);
+
+          return new ResponseResource($data);
       } catch (\Exception $e) {
-        return new ResponseResource($e);
+          return new ResponseResource($e);
       }
-
-
-
     }
 }

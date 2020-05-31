@@ -13,7 +13,8 @@ let SearchHospital = (function(){
             token: $('.token'),
             container: $('.wt-container'),
             header_container: $('.container_header'),
-            header_default: $('.header_default')
+            header_default: $('.header_default'),
+            search_header: $('.search_header')
         }
 
         return _ui;
@@ -32,7 +33,7 @@ let SearchHospital = (function(){
       var $url = $(ui.search).data('url');
       var $searchData = $(ui.search).val();
       var $token = $(ui.token).val();
-
+      $(ui.search_header).text('Search Results');
       $.post($url,{"_token": $token,'data': $searchData},function(response){
         var data = response.data;
         var $result = '';
@@ -40,17 +41,18 @@ let SearchHospital = (function(){
       // if($(ui.search).val() != ''){
         $(ui.container).html($result);
         $.each(data, function(key , val){
+          var infected = parseInt(val.beds_ward_o + val.icu_o + val.isolbed_o);
           $(ui.header_container).removeAttr('style');
           $(ui.header_default).prop('style', 'display:none !important;');
            $result =  `<div class="ct-activity__card hospital__coordinates" data-coordinates="${val.lat + '/' + val.lng}">
                          <div class="content__block card__content">
-                            <span>${val.cfname}</span>
+                            <span>${val.name}</span>
                         </div>
                         <div class="content__block card__content mt-2 ml-2">
-                            ${val.city_mun}
+                            ${val.address.city +" "+ val.address.province +" "+ val.address.region}
                         </div>
                         <div class="content__block card__content mt-2 ml-2">
-                            <span class="text-danger">Infected: 12</span>
+                            <span class="text-danger">Infected: ${val.infected.total}</span>
                         </div>
                       </div>`;
           $(ui.container).append($result);
@@ -94,6 +96,9 @@ let SearchHospital = (function(){
               return $word.toUpperCase();
           });
       }
+
+        var onboarding = $('[data-remodal-id=onboarding]').remodal();
+        onboarding.open();
     }
 
     function initGeolocation()
@@ -124,20 +129,20 @@ let SearchHospital = (function(){
 
          var data = response.data;
          var $result = '';
-
+         $(ui.search_header).text('Nearest Hospitals');
          $(ui.container).html($result);
          $.each(data, function(key , val){
            $(ui.header_container).removeAttr('style');
            $(ui.header_default).prop('style', 'display:none !important;');
             $result =   `<div class="ct-activity__card hospital__coordinates" data-coordinates="${val.lat + '/' + val.lng}">
                           <div class="content__block card__content">
-                             <span>${val.cfname}</span>
+                             <span>${val.name}</span>
                          </div>
                          <div class="content__block card__content mt-2 ml-2">
-                             ${val.city_mun}
+                             ${val.address.city +" "+ val.address.province +" "+ val.address.region}
                          </div>
                          <div class="content__block card__content mt-2 ml-2">
-                             <span class="text-danger">Infected: 12</span>
+                             <span class="text-danger">Infected: ${val.infected.total}</span>
                          </div>
                        </div>`;
            $(ui.container).append($result);
