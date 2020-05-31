@@ -47,10 +47,7 @@ let SearchHospital = (function(){
                             <span>${val.cfname}</span>
                         </div>
                         <div class="content__block card__content mt-2 ml-2">
-                            ${val.region}
-                        </div>
-                        <div class="content__block card__content ml-2">
-                            ${val.status}
+                            ${val.city_mun}
                         </div>
                         <div class="content__block card__content mt-2 ml-2">
                             <span class="text-danger">Infected: 12</span>

@@ -16,18 +16,18 @@ class HospitalController extends Controller
     public function index()
     {
       $subquery = DB::table('hospital')
-      ->select(DB::raw("MAX(updateddate) as updated_date, cfname"))
+      ->select(DB::raw("MAX(updated_date) as updated_date, cfname"))
       ->groupBy('cfname');
 
       $hospitals = Hospital::from("hospital as real_hospitals")
       ->joinSub($subquery, "grouped_hospitals", function($join) {
           $join->on("real_hospitals.cfname", "=", "grouped_hospitals.cfname")
-              ->on("real_hospitals.updateddate", "=", "grouped_hospitals.updated_date");
+              ->on("real_hospitals.updated_date", "=", "grouped_hospitals.updated_date");
       })
       ->whereNotNull('lat')
       ->whereNotNull('lng')
       ->get();
-  
+
       return view('index', compact('hospitals'));
     }
 
@@ -35,8 +35,8 @@ class HospitalController extends Controller
       try {
         $data = $search->data;
 
-        $hospitals = Hospital::where('name', 'like', '%' . $data . '%')
-                             ->orWhere('city', 'like', '%' . $data . '%')->take(30)->get();
+        $hospitals = Hospital::where('cfname', 'like', '%' . $data . '%')
+                             ->orWhere('city_mun', 'like', '%' . $data . '%')->take(30)->get();
         return new ResponseResource($hospitals);
       } catch (\Exception $e) {
         return new ResponseResource($e);
