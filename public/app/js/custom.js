@@ -25,7 +25,6 @@ let Map = (function(){
       var latlng = $(this).data('coordinates');
       var lat = latlng.split('/')[0];
       var lng = latlng.split('/')[1];
-      // console.log(latlng);
       if(latlng === '/'){
         var onboarding = $('[data-remodal-id=onboarding]').remodal();
         $('.ct-modal__content').html('');
@@ -64,3 +63,91 @@ let Map = (function(){
 $(document).ready(function(){
     Map.init();
 });
+
+function enablePopulationDensityMap()
+{
+    densityGeoJson = $.getJSON("luzon_pop_density.geojson", function(data){
+        L.geoJson(data, {
+            style: style,
+            onEachFeature: onEachFeature
+        }).addTo(map);
+    });
+
+    // get color depending on population density value
+    function getColor(density) {
+        if (density > 1000)
+            return "#800026";
+        else if (density > 500)
+            return "#BD0026";
+        else if (density > 200)
+            return "#E31A1C";
+        else if (density > 100)
+            return "#FC4E2A";
+        else if (density > 50)
+            return "#FD8D3C";
+        else if (density > 20)
+            return "#FEB24C";
+        else if (density > 10)
+            return "#FED976";
+        else
+            return "#FFEDA0";
+    }
+
+        // control that shows state info on hover
+        var info = L.control();
+
+        info.onAdd = function(map) {
+          this._div = L.DomUtil.create("div", "info");
+          this.update();
+          return this._div;
+        };
+    
+        info.update = function(props) {
+          this._div.innerHTML =
+            "<span style='color:white;'>" + "<h4>Philippine Population Density</h4>" +
+            (props
+              ? ("<b>" + props.DN +"</b>" + " people / mi<sup>2</sup>") : "Hover over a state");
+            + "</span>";
+        };
+    
+        info.addTo(map);
+
+    function highlightFeature(e) {
+        var layer = e.target;
+  
+        layer.setStyle({
+          weight: 5,
+          color: "#666",
+          dashArray: "",
+          fillOpacity: 0.7
+        });
+  
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          layer.bringToFront();
+        }
+  
+        info.update(layer.feature.properties);
+    }
+
+    function style(feature) {
+        return {
+            weight: 2,
+            opacity: 0,
+            color: "black",
+            dashArray: "3",
+            fillOpacity: 0.7,
+            fillColor: getColor(feature.properties.DN)
+        };
+    }
+
+    function zoomToFeature(e) {
+        map.fitBounds(e.target.getBounds());
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            mouseover: highlightFeature,
+            click: zoomToFeature
+        });
+    }
+}

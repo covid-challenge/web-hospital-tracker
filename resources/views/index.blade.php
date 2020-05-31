@@ -18,22 +18,31 @@
         var polygonFeatureGroup = L.featureGroup().addTo(map);
         var geoJsonFeatureGroup = L.featureGroup().addTo(map);
         var hospitals = JSON.parse( JSON.stringify( {!! json_encode($hospitals) !!} ) );
-        
+
         var markers = L.markerClusterGroup();
         
         for(var counter = 0; counter < hospitals.length; counter++)
         {
             var marker = L.marker([hospitals[counter]['lat'], hospitals[counter]['lng']]);
             marker.bindPopup("<strong>" + hospitals[counter]['cfname'] + "</strong> <br/> "
-            + "City: " + ( hospitals[counter]['city_mun'] != '' ? ucwords(hospitals[counter]['city_mun']) : 'N/A' ));
+            + "City: " + ( hospitals[counter]['city_mun'] != '' ? ucwords(hospitals[counter]['city_mun']) : 'N/A') + "<br/>"
+            + "Cases: " + ( hospitals[counter]['isolbed_o'] + hospitals[counter]['beds_ward_o'] + hospitals[counter]['icu_o'] ) );
+            marker.on('mouseover', function (e) {
+                this.openPopup();
+            });
+            marker.on('mouseout', function (e) {
+                this.closePopup();
+            });
             markers.addLayer(marker);
         }
         map.addLayer(markers);
-        
+
+        enablePopulationDensityMap();
+
         function ucwords (str) {
             return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($word) {
                 return $word.toUpperCase();
             });
-        }   
+        }
     </script>
 @endpush

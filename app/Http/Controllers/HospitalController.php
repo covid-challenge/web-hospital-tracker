@@ -105,11 +105,12 @@ class HospitalController extends Controller
       $data = $search->data;
       try {
 
-            $hospitalBeingSearched = Hospital::whereNotNull("lat")
-                                            ->whereNotNull("lng")
-                                            ->where("cfname", "like", "%" . $data . "%")
+            $hospitalBeingSearched = Hospital::where("cfname", "like", "%" . $data . "%")
                                             ->orWhere("city_mun", "like", "%" . $data . "%")
-                                            ->take(40)->get();
+                                            ->whereNotNull("lat")
+                                            ->whereNotNull("lng")
+                                            ->take(40)
+                                            ->get();
 
             $hospitalBeingSearched->transform($this->dataTransformer);
 
