@@ -107,9 +107,7 @@ class HospitalResourceController extends Controller
 
             $data->transform($this->dataTransformer);
 
-            return response()->json($data);
-
-            // return new ResponseResource($data);
+            return new ResponseResource($data);
         } catch (\Exception $e) {
             return new ResponseResource($e);
         }
