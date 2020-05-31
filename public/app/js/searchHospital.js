@@ -33,7 +33,9 @@ let SearchHospital = (function(){
       var $url = $(ui.search).data('url');
       var $searchData = $(ui.search).val();
       var $token = $(ui.token).val();
+      
       $(ui.search_header).text('Search Results');
+      
       $.post($url,{"_token": $token,'data': $searchData},function(response){
         var data = response.data;
         var $result = '';
@@ -57,48 +59,7 @@ let SearchHospital = (function(){
                       </div>`;
           $(ui.container).append($result);
         });
-        // }
-        // else{
-        //   $(ui.header_default).removeAttr('style');
-        //   $(ui.header_container).prop('style', 'display:none !important;');
-        // }
       });
-    }
-
-    function onLoadMap(){
-      // var map = L.map('map').setView([14.567264226512432, 121.02156182531817], 14.0);
-      var map = L.map('map').setView([SearchHospital.lat, SearchHospital.long], 14.0);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          tms: false,
-      }).addTo(map);
-
-      var polygonFeatureGroup = L.featureGroup().addTo(map);
-      var geoJsonFeatureGroup = L.featureGroup().addTo(map);
-      var hospitals = hospital;
-
-      var markers = L.markerClusterGroup();
-
-      for(var counter = 0; counter < hospitals.length; counter++)
-      {
-          var marker = L.marker([hospitals[counter]['lat'], hospitals[counter]['lng']]);
-          marker.bindPopup("<strong>" + hospitals[counter]['name'] + "</strong> <br/> "
-          + "City: " + ( hospitals[counter]['city'] != '' ? ucwords(hospitals[counter]['city']) : 'N/A' ) + "<br/>"
-          + "Operator Type: " + ucwords(hospitals[counter]['operator_type']) + "<br/>"
-          + "Amenity: " + ucwords(hospitals[counter]['amenity']) + "<br/>"
-          + "Status: " +  ucwords(hospitals[counter]['status']));
-          markers.addLayer(marker);
-      }
-
-      map.addLayer(markers);
-
-      function ucwords (str) {
-          return (str + '').replace(/^([a-z])|\s+([a-z])/g, function ($word) {
-              return $word.toUpperCase();
-          });
-      }
-
-        var onboarding = $('[data-remodal-id=onboarding]').remodal();
-        onboarding.open();
     }
 
     function initGeolocation()
@@ -107,16 +68,14 @@ let SearchHospital = (function(){
        //check geolocation available
        //try to get user current location using getCurrentPosition() method
        navigator.geolocation.getCurrentPosition(function(position){
-          SearchHospital.lat = position.coords.latitude;
-          SearchHospital.long = position.coords.longitude;
-          onLoadMap();
+          lat = position.coords.latitude;
+          long = position.coords.longitude;
+          map.setView([lat, long], 16);
           nearestHospitals();
         });
        }else{
          //browser not supported geolocation
-         SearchHospital.long = 121.02156182531817;
-         SearchHospital.lat = 14.567264226512432;
-         onLoadMap();
+         map.setView([lat, long], 16);
          nearestHospitals();
          alert('browser not supported geolocation');
        }
@@ -125,7 +84,7 @@ let SearchHospital = (function(){
      function nearestHospitals(){
        var $url = $(ui.nearestHospital).val();
        var $token = $(ui.token).val();
-       $.post($url,{"_token": $token,'lat': SearchHospital.lat , 'lng' : SearchHospital.long },function(response){
+       $.post($url,{"_token": $token,'lat': lat , 'lng' : long },function(response){
 
          var data = response.data;
          var $result = '';
