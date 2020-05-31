@@ -82,7 +82,7 @@ class HospitalController extends Controller
              return $finalData;
          };
      }
-     
+
     public function index()
     {
       $subquery = DB::table('hospital')
@@ -103,13 +103,20 @@ class HospitalController extends Controller
 
     public function searchHospital(Request $search){
       $data = $search->data;
+      $latOfBoundingCircle = $search->lat;
+      $longOfBoundingCircle = $search->lng;
       try {
 
-            $hospitalBeingSearched = Hospital::whereNotNull("lat")
-                                            ->whereNotNull("lng")
-                                            ->where("cfname", "like", "%" . $data . "%")
-                                            ->orWhere("city_mun", "like", "%" . $data . "%")
-                                            ->take(40)->get();
+            $hospitalBeingSearched =  Hospital::select(DB::raw("
+                    *, SQRT(
+                        POW(69.1 * (lat - $latOfBoundingCircle), 2) +
+                        POW(69.1 * ($longOfBoundingCircle - lng) * COS(lat / 57.3), 2)) AS distance"))
+            ->where("cfname", "like", "%" . $data . "%")
+            ->orWhere("city_mun", "like", "%" . $data . "%")
+            ->orderBy('distance')
+            ->whereNotNull("lat")
+            ->whereNotNull("lng")
+            ->take(40)->get();
 
             $hospitalBeingSearched->transform($this->dataTransformer);
 
@@ -121,22 +128,18 @@ class HospitalController extends Controller
 
     public function nearestHospitals(Request $request){
       try {
-          $radiusOfEarthInKilometers = 6371;
           $latOfBoundingCircle = $request->input("lat");
           $longOfBoundingCircle = $request->input("lng");
-          $radiusOfLocationsToSearchInKilometers = 10;
 
-          // computations
-          $minLat = $latOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
-          $maxLat = $latOfBoundingCircle + $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI;
-          $minLong = $longOfBoundingCircle - $radiusOfLocationsToSearchInKilometers / $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
-          $maxLong = $longOfBoundingCircle + $radiusOfLocationsToSearchInKilometers/ $radiusOfEarthInKilometers * 180 / M_PI / cos($latOfBoundingCircle * M_PI / 180);
-
-          $data = Hospital::whereNotNull("lat")
-                          ->whereNotNull("lng")
-                          ->whereBetween("lat", [$minLat, $maxLat])
-                          ->whereBetween("lng", [$minLong, $maxLong])
-                          ->take(40)->get();
+          $data =  Hospital::select(DB::raw("
+                    *, SQRT(
+                        POW(69.1 * (lat - $latOfBoundingCircle), 2) +
+                        POW(69.1 * ($longOfBoundingCircle - lng) * COS(lat / 57.3), 2)) AS distance"))
+            ->havingRaw('distance < 10')
+            ->orderBy('distance')
+            ->whereNotNull("lat")
+            ->whereNotNull("lng")
+            ->take(40)->get();
 
           $data->transform($this->dataTransformer);
 
