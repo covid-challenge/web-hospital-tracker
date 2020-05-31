@@ -96,6 +96,42 @@ function enablePopulationDensityMap()
             return "#FFEDA0";
     }
 
+        // control that shows state info on hover
+        var info = L.control();
+
+        info.onAdd = function(map) {
+          this._div = L.DomUtil.create("div", "info");
+          this.update();
+          return this._div;
+        };
+    
+        info.update = function(props) {
+          this._div.innerHTML =
+            "<span style='color:white;'>" + "<h4>Philippine Population Density</h4>" +
+            (props
+              ? ("<b>" + props.DN +"</b>" + " people / mi<sup>2</sup>") : "Hover over a state");
+            + "</span>";
+        };
+    
+        info.addTo(map);
+
+    function highlightFeature(e) {
+        var layer = e.target;
+  
+        layer.setStyle({
+          weight: 5,
+          color: "#666",
+          dashArray: "",
+          fillOpacity: 0.7
+        });
+  
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          layer.bringToFront();
+        }
+  
+        info.update(layer.feature.properties);
+    }
+
     function style(feature) {
         return {
             weight: 2,
@@ -113,6 +149,7 @@ function enablePopulationDensityMap()
 
     function onEachFeature(feature, layer) {
         layer.on({
+            mouseover: highlightFeature,
             click: zoomToFeature
         });
     }
