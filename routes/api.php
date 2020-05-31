@@ -17,3 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::prefix('hospitals')->group(function() {
+    Route::get("/", "HospitalResourceController@index");
+    Route::get("/search", "HospitalResourceController@search");
+});
