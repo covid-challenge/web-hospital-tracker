@@ -8,7 +8,7 @@
                 <div class="ct-modal__content">
                     <div class="content__heading text-center">
                         <h1 class="ct-modal__title text--lg">Welcome to</h1>
-                        <span class="content__profile_name text--lg">The Helius Project</span>
+                        <span class="content__profile_name text--lg">HospitALL</span>
                     </div>
                     <p class="content__heading">
                         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -16,8 +16,7 @@
                     </p>
 
                     <div class="ct-modal__content text-center">
-                        <button class="btn btn--primary btn--round mx-1" type="">Hospital Nearby</button>
-                        <button class="btn btn--primary btn--round mx-1" type="">Hospital Status Map</button>
+                        <button data-remodal-action="close" class="btn btn--primary btn--round mx-1" type="">OK</button>
                     </div>
                 </div>
             </div>
