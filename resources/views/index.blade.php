@@ -26,6 +26,12 @@
             marker.bindPopup("<strong>" + hospitals[counter]['cfname'] + "</strong> <br/> "
             + "City: " + ( hospitals[counter]['city_mun'] != '' ? ucwords(hospitals[counter]['city_mun']) : 'N/A') + "<br/>"
             + "Cases: " + ( hospitals[counter]['isolbed_o'] + hospitals[counter]['beds_ward_o'] + hospitals[counter]['icu_o'] ) );
+            marker.on('mouseover', function (e) {
+                this.openPopup();
+            });
+            marker.on('mouseout', function (e) {
+                this.closePopup();
+            });
             markers.addLayer(marker);
         }
 
