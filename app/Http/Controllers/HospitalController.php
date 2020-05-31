@@ -107,7 +107,6 @@ class HospitalController extends Controller
       $longOfBoundingCircle = $search->lng;
       try {
 
-<<<<<<< HEAD
             $hospitalBeingSearched =  Hospital::select(DB::raw("
                     *, SQRT(
                         POW(69.1 * (lat - $latOfBoundingCircle), 2) +
@@ -118,14 +117,6 @@ class HospitalController extends Controller
             ->whereNotNull("lat")
             ->whereNotNull("lng")
             ->take(40)->get();
-=======
-            $hospitalBeingSearched = Hospital::where("cfname", "like", "%" . $data . "%")
-                                            ->orWhere("city_mun", "like", "%" . $data . "%")
-                                            ->whereNotNull("lat")
-                                            ->whereNotNull("lng")
-                                            ->take(40)
-                                            ->get();
->>>>>>> 2ba85ed824291534bb54bb0c7d83c689f83815c6
 
             $hospitalBeingSearched->transform($this->dataTransformer);
 
