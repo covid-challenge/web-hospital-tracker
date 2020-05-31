@@ -44,10 +44,10 @@ let SearchHospital = (function(){
           $(ui.header_default).prop('style', 'display:none !important;');
            $result =  `<div class="ct-activity__card hospital__coordinates" data-coordinates="${val.lat + '/' + val.lng}">
                          <div class="content__block card__content">
-                            <span>${val.name}</span>
+                            <span>${val.cfname}</span>
                         </div>
                         <div class="content__block card__content mt-2 ml-2">
-                            ${val.address}
+                            ${val.region}
                         </div>
                         <div class="content__block card__content ml-2">
                             ${val.status}
